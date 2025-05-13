@@ -1,0 +1,6 @@
+{
+  "name": "react-lua",
+  "scripts": {
+    "release": "pnpm publish --recursive --tag latest"
+  }
+}

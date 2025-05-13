@@ -1,0 +1,290 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .: {}
+
+  modules/react:
+    dependencies:
+      '@rbxts-js/luau-polyfill':
+        specifier: ^1.2.3-ts.1
+        version: 1.2.3-ts.1
+      '@rbxts-js/shared':
+        specifier: workspace:^
+        version: link:../shared
+
+  modules/react-cache:
+    dependencies:
+      '@rbxts-js/luau-polyfill':
+        specifier: ^1.2.3-ts.1
+        version: 1.2.3-ts.1
+      '@rbxts-js/react':
+        specifier: workspace:^
+        version: link:../react
+      '@rbxts-js/scheduler':
+        specifier: workspace:^
+        version: link:../scheduler
+      '@rbxts-js/shared':
+        specifier: workspace:^
+        version: link:../shared
+
+  modules/react-debug-tools:
+    dependencies:
+      '@rbxts-js/luau-polyfill':
+        specifier: ^1.2.3-ts.1
+        version: 1.2.3-ts.1
+      '@rbxts-js/react-reconciler':
+        specifier: workspace:^
+        version: link:../react-reconciler
+      '@rbxts-js/shared':
+        specifier: workspace:^
+        version: link:../shared
+
+  modules/react-devtools-extensions:
+    dependencies:
+      '@rbxts-js/luau-polyfill':
+        specifier: ^1.2.3-ts.1
+        version: 1.2.3-ts.1
+      '@rbxts-js/react':
+        specifier: workspace:^
+        version: link:../react
+      '@rbxts-js/react-devtools-shared':
+        specifier: workspace:^
+        version: link:../react-devtools-shared
+      '@rbxts-js/react-roblox':
+        specifier: workspace:^
+        version: link:../react-roblox
+      '@rbxts-js/shared':
+        specifier: workspace:^
+        version: link:../shared
+
+  modules/react-devtools-shared:
+    dependencies:
+      '@rbxts-js/luau-polyfill':
+        specifier: ^1.2.3-ts.1
+        version: 1.2.3-ts.1
+      '@rbxts-js/react':
+        specifier: workspace:^
+        version: link:../react
+      '@rbxts-js/react-debug-tools':
+        specifier: workspace:^
+        version: link:../react-debug-tools
+      '@rbxts-js/react-is':
+        specifier: workspace:^
+        version: link:../react-is
+      '@rbxts-js/react-reconciler':
+        specifier: workspace:^
+        version: link:../react-reconciler
+      '@rbxts-js/react-roblox':
+        specifier: workspace:^
+        version: link:../react-roblox
+      '@rbxts-js/shared':
+        specifier: workspace:^
+        version: link:../shared
+
+  modules/react-is:
+    dependencies:
+      '@rbxts-js/shared':
+        specifier: workspace:^
+        version: link:../shared
+
+  modules/react-reconciler:
+    dependencies:
+      '@rbxts-js/luau-polyfill':
+        specifier: ^1.2.3-ts.1
+        version: 1.2.3-ts.1
+      '@rbxts-js/react':
+        specifier: workspace:^
+        version: link:../react
+      '@rbxts-js/roblox-lua-promise':
+        specifier: ^3.5.0-ts.2
+        version: 3.5.0-ts.2
+      '@rbxts-js/safe-flags':
+        specifier: workspace:^
+        version: link:../safe-flags
+      '@rbxts-js/scheduler':
+        specifier: workspace:^
+        version: link:../scheduler
+      '@rbxts-js/shared':
+        specifier: workspace:^
+        version: link:../shared
+
+  modules/react-roblox:
+    dependencies:
+      '@rbxts-js/luau-polyfill':
+        specifier: ^1.2.3-ts.1
+        version: 1.2.3-ts.1
+      '@rbxts-js/react':
+        specifier: workspace:^
+        version: link:../react
+      '@rbxts-js/react-reconciler':
+        specifier: workspace:^
+        version: link:../react-reconciler
+      '@rbxts-js/scheduler':
+        specifier: workspace:^
+        version: link:../scheduler
+      '@rbxts-js/shared':
+        specifier: workspace:^
+        version: link:../shared
+
+  modules/react-shallow-renderer:
+    dependencies:
+      '@rbxts-js/luau-polyfill':
+        specifier: ^1.2.3-ts.1
+        version: 1.2.3-ts.1
+      '@rbxts-js/react':
+        specifier: workspace:^
+        version: link:../react
+      '@rbxts-js/react-is':
+        specifier: workspace:^
+        version: link:../react-is
+      '@rbxts-js/shared':
+        specifier: workspace:^
+        version: link:../shared
+
+  modules/react-test-renderer:
+    dependencies:
+      '@rbxts-js/luau-polyfill':
+        specifier: ^1.2.3-ts.1
+        version: 1.2.3-ts.1
+      '@rbxts-js/react':
+        specifier: workspace:^
+        version: link:../react
+      '@rbxts-js/react-reconciler':
+        specifier: workspace:^
+        version: link:../react-reconciler
+      '@rbxts-js/scheduler':
+        specifier: workspace:^
+        version: link:../scheduler
+      '@rbxts-js/shared':
+        specifier: workspace:^
+        version: link:../shared
+
+  modules/roact-compat:
+    dependencies:
+      '@rbxts-js/luau-polyfill':
+        specifier: ^1.2.3-ts.1
+        version: 1.2.3-ts.1
+      '@rbxts-js/react':
+        specifier: workspace:^
+        version: link:../react
+      '@rbxts-js/react-roblox':
+        specifier: workspace:^
+        version: link:../react-roblox
+      '@rbxts-js/shared':
+        specifier: workspace:^
+        version: link:../shared
+
+  modules/safe-flags: {}
+
+  modules/scheduler:
+    dependencies:
+      '@rbxts-js/luau-polyfill':
+        specifier: ^1.2.3-ts.1
+        version: 1.2.3-ts.1
+      '@rbxts-js/safe-flags':
+        specifier: workspace:^
+        version: link:../safe-flags
+      '@rbxts-js/shared':
+        specifier: workspace:^
+        version: link:../shared
+
+  modules/shared:
+    dependencies:
+      '@rbxts-js/luau-polyfill':
+        specifier: ^1.2.3-ts.1
+        version: 1.2.3-ts.1
+      '@rbxts-js/safe-flags':
+        specifier: workspace:^
+        version: link:../safe-flags
+
+packages:
+
+  '@rbxts-js/boolean@1.2.3-ts.1':
+    resolution: {integrity: sha512-IlYFG9uatXQKXOLR1mdptVeEcxudwBCierO+Vu6VZRRaI+/+JDxUClm+QFZyce/kitwnDTmtNvhqVAUtFvCU0Q==}
+
+  '@rbxts-js/collections@1.2.3-ts.1':
+    resolution: {integrity: sha512-RYT73QyEdsV+DCQMtyzT2bZ1P12j2b+JSHVdb1x6xrDq/KdVEkk/QAzW+o22vPrLXbHa6/jA5bmVlgVcOOrIjA==}
+
+  '@rbxts-js/console@1.2.3-ts.1':
+    resolution: {integrity: sha512-qacyJE7bYf4n9448F7mn9e8Y5qljZb7QkSmsmnbQT2HA9Mecvg3gqc9RwCIdVkBV6o1AGVAHbatNQ3a39zPjaw==}
+
+  '@rbxts-js/es7-types@1.2.3-ts.1':
+    resolution: {integrity: sha512-Z7NitBQp6tyzsr5eKlSX54rmopKXpzGu33lYikjF37llrnGFBpnRcZgCJwHKYciloRmjUtnR/UohUNwbWyG9Zg==}
+
+  '@rbxts-js/instance-of@1.2.3-ts.1':
+    resolution: {integrity: sha512-3fKvDPvxHuEZALNBP2XdbXfzjEfbgsXAheCm1Jf5kC2r+HgszW+yqg4zY6TjW0pcsJM2JjH+fM52oomSNu3LLQ==}
+
+  '@rbxts-js/luau-polyfill@1.2.3-ts.1':
+    resolution: {integrity: sha512-2asgvWrOhf311rNgEM/fxMO3+xOVI63Cz1K1PobyZVtDdd87ZJ6RGiZSFl1EAeU77SZc8280toJDVs9YSwxWnA==}
+
+  '@rbxts-js/math@1.2.3-ts.1':
+    resolution: {integrity: sha512-mF7IMJJyxYE02cRNWJ1wsq4pPaAEXKX+CbGlmI0G3QBgWVHj+Oi02IR6pssyUyE6Y2BKvgvP3dcJuTO51OX25A==}
+
+  '@rbxts-js/number@1.2.3-ts.1':
+    resolution: {integrity: sha512-tPdt2s7fEBSxImVFBUvuSMtBKIvaZUCtlOjBl58Y0+GKB15VPXFIRW/5biVruXPnv9d4sDE3mh986ZxxN4UQ5w==}
+
+  '@rbxts-js/roblox-lua-promise@3.5.0-ts.2':
+    resolution: {integrity: sha512-H8fxKVJkRnM60yTZ/riO4X43GZD/MViFm+ftCzzAALkAhE4vSaBDNv9E7IUjZZoWi21bG6vZ8mGIiYfavaljvw==}
+
+  '@rbxts-js/string@1.2.3-ts.1':
+    resolution: {integrity: sha512-Je/WKgZbXF/sAHEsQPuns5n4rWzux327zjr0KRf9Gy62ieUzl2FRZZHjVYce3xdMtHif2JstIf/J3p513TUtRg==}
+
+  '@rbxts-js/symbol-luau@1.0.0-ts.1':
+    resolution: {integrity: sha512-TQS/ImDCK5KPGvbmyScH5EZS0ELSCDvZEFR3W+ItPlsLl+bDRSI/0uaKtJ7rbwXgdGwBDKM1QXFPjqe+KOphIA==}
+
+  '@rbxts-js/timers@1.2.3-ts.1':
+    resolution: {integrity: sha512-HKP4ymFX3QLWbR/2Gy4LXwvkhjC9OzbwZ5bNunxu+M8Ocbi1cjRduiZK/y5ogLr9cNIfSoxs6e1DQ3soc8/hwA==}
+
+snapshots:
+
+  '@rbxts-js/boolean@1.2.3-ts.1':
+    dependencies:
+      '@rbxts-js/collections': 1.2.3-ts.1
+
+  '@rbxts-js/collections@1.2.3-ts.1':
+    dependencies:
+      '@rbxts-js/es7-types': 1.2.3-ts.1
+      '@rbxts-js/instance-of': 1.2.3-ts.1
+
+  '@rbxts-js/console@1.2.3-ts.1':
+    dependencies:
+      '@rbxts-js/collections': 1.2.3-ts.1
+
+  '@rbxts-js/es7-types@1.2.3-ts.1': {}
+
+  '@rbxts-js/instance-of@1.2.3-ts.1': {}
+
+  '@rbxts-js/luau-polyfill@1.2.3-ts.1':
+    dependencies:
+      '@rbxts-js/boolean': 1.2.3-ts.1
+      '@rbxts-js/collections': 1.2.3-ts.1
+      '@rbxts-js/console': 1.2.3-ts.1
+      '@rbxts-js/es7-types': 1.2.3-ts.1
+      '@rbxts-js/instance-of': 1.2.3-ts.1
+      '@rbxts-js/math': 1.2.3-ts.1
+      '@rbxts-js/number': 1.2.3-ts.1
+      '@rbxts-js/string': 1.2.3-ts.1
+      '@rbxts-js/symbol-luau': 1.0.0-ts.1
+      '@rbxts-js/timers': 1.2.3-ts.1
+
+  '@rbxts-js/math@1.2.3-ts.1': {}
+
+  '@rbxts-js/number@1.2.3-ts.1': {}
+
+  '@rbxts-js/roblox-lua-promise@3.5.0-ts.2': {}
+
+  '@rbxts-js/string@1.2.3-ts.1':
+    dependencies:
+      '@rbxts-js/es7-types': 1.2.3-ts.1
+      '@rbxts-js/number': 1.2.3-ts.1
+
+  '@rbxts-js/symbol-luau@1.0.0-ts.1': {}
+
+  '@rbxts-js/timers@1.2.3-ts.1':
+    dependencies:
+      '@rbxts-js/collections': 1.2.3-ts.1
