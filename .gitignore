@@ -6,6 +6,7 @@ Packages/*
 Packages/_Workspace/*
 !Packages/_Workspace/.robloxrc
 standalone/Packages
+node_modules
 **/*.rbx[lm]*
 .DS_Store
 .vscode
