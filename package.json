@@ -1,5 +1,8 @@
 {
   "name": "react-lua",
+  "workspaces": [
+    "modules/*"
+  ],
   "scripts": {
     "release": "pnpm publish --recursive --tag latest"
   }
