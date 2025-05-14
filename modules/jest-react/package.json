@@ -1,5 +1,5 @@
 {
-  "name": "@rbxts-js/react-is",
+  "name": "@rbxts-js/jest-react",
   "version": "17.1.20-ts.1",
   "repository": {
     "type": "git",
@@ -15,6 +15,8 @@
     "!**/__tests__"
   ],
   "dependencies": {
+    "@rbxts-js/luau-polyfill": "^1.2.3-ts.1",
+    "@rbxts-js/jest-globals": "^3.13.2-ts.3",
     "@rbxts-js/shared": "workspace:^"
   }
 }
