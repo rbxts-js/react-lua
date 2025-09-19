@@ -1,6 +1,6 @@
 {
   "name": "@rbxts-js/react-devtools-shared",
-  "version": "17.1.20-ts.1",
+  "version": "17.3.5-ts.1",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rbxts-js/react-lua.git"
@@ -20,6 +20,7 @@
     "@rbxts-js/react-is": "workspace:^",
     "@rbxts-js/react-reconciler": "workspace:^",
     "@rbxts-js/react-roblox": "workspace:^",
+    "@rbxts-js/react-globals": "workspace:^",
     "@rbxts-js/react": "workspace:^",
     "@rbxts-js/shared": "workspace:^"
   }
