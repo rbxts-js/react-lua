@@ -1,5 +1,5 @@
 {
-  "name": "@rbxts-js/react-reconciler",
+  "name": "@rbxts-js/react-devtools-core",
   "version": "17.3.5-ts.1",
   "repository": {
     "type": "git",
@@ -16,11 +16,8 @@
   ],
   "dependencies": {
     "@rbxts-js/luau-polyfill": "^1.2.3-ts.1",
-    "@rbxts-js/react": "workspace:^",
-    "@rbxts-js/roblox-lua-promise": "^3.5.0-ts.2",
-    "@rbxts-js/safe-flags": "workspace:^",
-    "@rbxts-js/scheduler": "workspace:^",
-    "@rbxts-js/shared": "workspace:^",
-    "@rbxts-js/react-globals": "workspace:^"
+    "@rbxts-js/react-devtools-shared": "workspace:^",
+    "@rbxts-js/react-globals": "workspace:^",
+    "@rbxts-js/react-telemetry": "workspace:^"
   }
 }

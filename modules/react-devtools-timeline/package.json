@@ -1,5 +1,5 @@
 {
-  "name": "@rbxts-js/react-shallow-renderer",
+  "name": "@rbxts-js/react-devtools-timeline",
   "version": "17.3.5-ts.1",
   "repository": {
     "type": "git",
@@ -13,12 +13,5 @@
     "default.project.json",
     "!.robloxrc",
     "!**/__tests__"
-  ],
-  "dependencies": {
-    "@rbxts-js/luau-polyfill": "^1.2.3-ts.1",
-    "@rbxts-js/react": "workspace:^",
-    "@rbxts-js/react-is": "workspace:^",
-    "@rbxts-js/react-globals": "workspace:^",
-    "@rbxts-js/shared": "workspace:^"
-  }
+  ]
 }
