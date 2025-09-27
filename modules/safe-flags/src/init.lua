@@ -6,6 +6,7 @@
 	ReactSchedulerEnableDeferredWork
 	ReactSchedulerSetFrameMarkerOnHeartbeatEnd
 	ReactSchedulerSetTargetMsByHeartbeatDelta
+	ReactPreventAssigningKeyToChildren
 
 	FInts:
 	ReactSchedulerDesiredFrameRate
@@ -13,11 +14,11 @@
 	ReactSchedulerYieldInterval2
 ]]
 
--- These flags are currently enabled in Roblox Studio.
 local safeFlags = {
 	-- ReactEnableSchedulingProfiler = true,
 	ReactInlineMergeLanes = true,
 	ReactInstanceMapDisableErrorChecking = true,
+	ReactPreventAssigningKeyToChildren = true,
 }
 
 local function createGetFFlag(name: string): () -> boolean
