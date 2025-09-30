@@ -1,24 +1,23 @@
---[[
-	FFlags:
-	ReactEnableSchedulingProfiler
-	ReactInlineMergeLanes
-	ReactInstanceMapDisableErrorChecking
-	ReactSchedulerEnableDeferredWork
-	ReactSchedulerSetFrameMarkerOnHeartbeatEnd
-	ReactSchedulerSetTargetMsByHeartbeatDelta
-	ReactPreventAssigningKeyToChildren
-
-	FInts:
-	ReactSchedulerDesiredFrameRate
-	ReactSchedulerMinFrameRate
-	ReactSchedulerYieldInterval2
-]]
-
 local safeFlags = {
-	-- ReactEnableSchedulingProfiler = true,
+	ReactCleanQueueOnUpdateBailout = true,
+	ReactEnableSchedulingProfiler = true,
 	ReactInlineMergeLanes = true,
 	ReactInstanceMapDisableErrorChecking = true,
+	ReactIsolatedGlobalsEnabled = true,
+	ReactIsProtectedTypeOf = true,
 	ReactPreventAssigningKeyToChildren = true,
+	ReactSchedulerEnableDeferredWork = nil,
+	ReactSchedulerLookbackUseRingBuffer = nil,
+	ReactSchedulerSetFrameMarkerOnHeartbeatEnd = nil,
+	ReactSchedulerSetTargetMsByHeartbeatDelta = nil,
+	ReactTelemetryEnabled = nil,
+}
+
+local safeInts = {
+	ReactSchedulerDesiredFrameRate = nil,
+	ReactSchedulerMinFrameRate = nil,
+	ReactSchedulerNumberOfLookbackFrames = nil,
+	ReactSchedulerYieldInterval2 = nil,
 }
 
 local function createGetFFlag(name: string): () -> boolean
@@ -29,7 +28,7 @@ end
 
 local function createGetFInt(name: string, default: number): () -> number
 	return function()
-		return default
+		return safeInts[name] or default
 	end
 end
 
