@@ -1,6 +1,9 @@
 local safeFlags = {
+	ReactCatchYieldingInDEV = true,
 	ReactCleanQueueOnUpdateBailout = true,
+	ReactDevtoolsUseHttpWebStream = true,
 	ReactEnableSchedulingProfiler = true,
+	ReactFilterInternalStackFrames = true,
 	ReactInlineMergeLanes = true,
 	ReactInstanceMapDisableErrorChecking = true,
 	ReactIsolatedGlobalsEnabled = true,
