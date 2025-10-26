@@ -1,37 +1,33 @@
-local safeFlags = {
-	ReactCatchYieldingInDEV = true,
-	ReactCleanQueueOnUpdateBailout = true,
-	ReactDevtoolsUseHttpWebStream = true,
-	ReactEnableSchedulingProfiler = true,
-	ReactFilterInternalStackFrames = true,
-	ReactInlineMergeLanes = true,
-	ReactInstanceMapDisableErrorChecking = true,
-	ReactIsolatedGlobalsEnabled = true,
-	ReactIsProtectedTypeOf = true,
-	ReactPreventAssigningKeyToChildren = true,
-	ReactSchedulerEnableDeferredWork = nil,
-	ReactSchedulerLookbackUseRingBuffer = nil,
-	ReactSchedulerSetFrameMarkerOnHeartbeatEnd = nil,
-	ReactSchedulerSetTargetMsByHeartbeatDelta = nil,
-	ReactTelemetryEnabled = nil,
-}
+local function createGetFFlag(name: string, value: boolean?): () -> boolean
+	local success, problem = pcall(function()
+		(game :: any):DefineFastFlag(name, if value then value else false)
+	end)
 
-local safeInts = {
-	ReactSchedulerDesiredFrameRate = nil,
-	ReactSchedulerMinFrameRate = nil,
-	ReactSchedulerNumberOfLookbackFrames = nil,
-	ReactSchedulerYieldInterval2 = nil,
-}
+	if not success and problem:match("The current thread cannot call") then
+		return function()
+			-- Debug flags are false, non-Debug flags are true
+			return name:match("^Debug") == nil
+		end
+	end
 
-local function createGetFFlag(name: string): () -> boolean
 	return function()
-		return safeFlags[name] or false
+		return game:GetFastFlag(name)
 	end
 end
 
-local function createGetFInt(name: string, default: number): () -> number
+local function createGetFInt(name: string, value: number): () -> number
+	local success, problem = pcall(function()
+		(game :: any):DefineFastInt(name, value)
+	end)
+
+	if not success and problem:match("The current thread cannot call") then
+		return function()
+			return value
+		end
+	end
+
 	return function()
-		return safeInts[name] or default
+		return game:GetFastInt(name)
 	end
 end
 
