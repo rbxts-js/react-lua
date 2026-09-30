@@ -1,7 +1,7 @@
 [package]
 name = "roblox/react-scheduler"
 description = "Cooperative scheduling primitives used by React Luau."
-version = "17.3.11"
+version = "17.3.12"
 license = "MIT"
 authors = ["Roblox <no-reply@roblox.com>"]
 realm = "shared"
