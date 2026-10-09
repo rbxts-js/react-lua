@@ -3919,6 +3919,91 @@ describe("useMemo", function()
 		jestExpect(Scheduler).toFlushAndYield({ "x - y = 6, x + y = 10", "610" })
 		jestExpect(ReactNoop.getChildren()).toEqual({ span("610") })
 	end)
+
+	describe("with ReactEnableAllocationTrims", function()
+		-- Storing useMemo results without a tuple also keeps nil and trailing nil values
+		beforeEach(function()
+			jest.resetModules()
+			require(Packages.Shared).ReactFeatureFlags.enableAllocationTrims = true
+			React = require(Packages.React)
+			ReactNoop = require(Packages.Dev.ReactNoopRenderer)
+			Scheduler = require(Packages.Scheduler)
+			useMemo = React.useMemo
+		end)
+
+		it("preserves nil and trailing nil return values", function()
+			local results
+			local function Probe(props)
+				results = table.pack(useMemo(function()
+					Scheduler.unstable_yieldValue("compute")
+					return props.a, nil, props.c, nil
+				end, { props.a, props.c }))
+				return React.createElement(Text, { text = tostring(results.n) })
+			end
+
+			ReactNoop.render(React.createElement(Probe, { a = 1, c = 3 }))
+			jestExpect(Scheduler).toFlushAndYield({ "compute", "4" })
+			jestExpect(results).toEqual({ n = 4, [1] = 1, [3] = 3 })
+
+			ReactNoop.render(React.createElement(Probe, { a = 1, c = 3 }))
+			jestExpect(Scheduler).toFlushAndYield({ "4" })
+			jestExpect(results).toEqual({ n = 4, [1] = 1, [3] = 3 })
+
+			ReactNoop.render(React.createElement(Probe, { a = nil, c = 5 }))
+			jestExpect(Scheduler).toFlushAndYield({ "compute", "4" })
+			jestExpect(results).toEqual({ n = 4, [3] = 5 })
+		end)
+
+		it("memoizes nil, table, and zero return values", function()
+			local nilCount, tableValue, zeroCount
+			local function Probe(props)
+				local nilResults = table.pack(useMemo(function()
+					Scheduler.unstable_yieldValue("compute nil")
+					return nil
+				end, { props.input }))
+				nilCount = nilResults.n
+				tableValue = useMemo(function()
+					Scheduler.unstable_yieldValue("compute table")
+					-- a table that looks like packed values must be returned as-is
+					return { n = 2, value = props.input }
+				end, { props.input })
+				zeroCount = select(
+					"#",
+					useMemo(function()
+						Scheduler.unstable_yieldValue("compute zero")
+					end, { props.input })
+				)
+				return React.createElement(Text, { text = props.input })
+			end
+
+			ReactNoop.render(React.createElement(Probe, { input = "A" }))
+			jestExpect(Scheduler).toFlushAndYield({
+				"compute nil",
+				"compute table",
+				"compute zero",
+				"A",
+			})
+			local firstTable = tableValue
+			jestExpect(nilCount).toBe(1)
+			jestExpect(firstTable).toEqual({ n = 2, value = "A" })
+			jestExpect(zeroCount).toBe(0)
+
+			ReactNoop.render(React.createElement(Probe, { input = "A" }))
+			jestExpect(Scheduler).toFlushAndYield({ "A" })
+			jestExpect(nilCount).toBe(1)
+			jestExpect(tableValue).toBe(firstTable)
+			jestExpect(zeroCount).toBe(0)
+
+			ReactNoop.render(React.createElement(Probe, { input = "B" }))
+			jestExpect(Scheduler).toFlushAndYield({
+				"compute nil",
+				"compute table",
+				"compute zero",
+				"B",
+			})
+			jestExpect(tableValue).toEqual({ n = 2, value = "B" })
+		end)
+	end)
 	-- ROBLOX deviation END
 
 	it("always re-computes if no inputs are provided", function()
@@ -5011,4 +5096,34 @@ it("effect dependencies are persisted after a render phase update", function()
 	end)
 
 	jestExpect(Scheduler).toHaveYielded({ "Render: 0" })
+end)
+
+describe("eager reducer errors", function()
+	it(
+		"renders instead of bailing out when the eager reducer throws (ReactFixEagerReducerError)",
+		function()
+			require(Packages.Shared).ReactFeatureFlags.fixEagerReducerError = true
+			-- The thrown value equals the current state, so comparing it as a state
+			-- would wrongly bail out and swallow the update
+			local function reducer(state, action)
+				if action == "throw" then
+					error("boom", 0)
+				end
+				return action
+			end
+			local dispatchRef
+			local function App()
+				local state, dispatch = useReducer(reducer, "boom")
+				dispatchRef = dispatch
+				return React.createElement(Text, { text = state })
+			end
+			ReactNoop.render(React.createElement(App))
+			jestExpect(Scheduler).toFlushAndYield({ "boom" })
+
+			dispatchRef("throw")
+			jestExpect(function()
+				Scheduler.unstable_flushAllWithoutAsserting()
+			end).toThrow("boom")
+		end
+	)
 end)

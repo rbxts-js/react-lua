@@ -303,6 +303,66 @@ describe("setState-specific behavior", function()
 		jestExpect(capturedState).toEqual({ b = 2 })
 	end)
 
+	describe("with ReactEnableAllocationTrims", function()
+		beforeEach(function()
+			jest.resetModules()
+			require(Packages.Shared).ReactFeatureFlags.enableAllocationTrims = true
+			ReactNoop = require(Packages.Dev.ReactNoopRenderer)
+			React = require(script.Parent.Parent)
+		end)
+
+		it("merges setState after mount without mutating the previous state", function()
+			local MyComponent = React.Component:extend("MyComponent")
+			local instance
+			function MyComponent:init()
+				self.state = { a = 1, b = 2 }
+			end
+			function MyComponent:render()
+				instance = self
+				return nil
+			end
+
+			ReactNoop.act(function()
+				ReactNoop.render(React.createElement(MyComponent))
+			end)
+
+			local prevState = instance.state
+			ReactNoop.act(function()
+				instance:setState({ a = React.None, c = 3 })
+			end)
+
+			jestExpect(instance.state).toEqual({ b = 2, c = 3 })
+			jestExpect(instance.state).never.toBe(prevState)
+			jestExpect(prevState).toEqual({ a = 1, b = 2 })
+		end)
+
+		it("does not copy a metatable from the previous state", function()
+			local MyComponent = React.Component:extend("MyComponent")
+			local instance
+			function MyComponent:init()
+				self.state = setmetatable({ a = 1 }, {
+					__index = function()
+						return "fallback"
+					end,
+				})
+			end
+			function MyComponent:render()
+				instance = self
+				return nil
+			end
+
+			ReactNoop.act(function()
+				ReactNoop.render(React.createElement(MyComponent))
+			end)
+			ReactNoop.act(function()
+				instance:setState({ b = 2 })
+			end)
+
+			jestExpect(getmetatable(instance.state)).toBe(nil)
+			jestExpect(instance.state).toEqual({ a = 1, b = 2 })
+		end)
+	end)
+
 	it("provides an empty table to functional setState on first run", function()
 		local MyComponent = React.Component:extend("MyComponent")
 		local capturedState, capturedPrevState

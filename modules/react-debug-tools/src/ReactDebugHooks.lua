@@ -103,6 +103,8 @@ local SharedModule = require(Packages.Shared)
 local ReactSharedInternals = SharedModule.ReactSharedInternals
 local ReactSymbols = SharedModule.ReactSymbols
 local REACT_OPAQUE_ID_TYPE = ReactSymbols.REACT_OPAQUE_ID_TYPE
+local MemoValues = SharedModule.MemoValues
+local enableAllocationTrims = SharedModule.ReactFeatureFlags.enableAllocationTrims
 -- ROBLOX deviation END
 -- ROBLOX deviation START: fix import - get from ReconcilerModule
 -- local reactReconcilerSrcReactWorkTagsModule =
@@ -385,15 +387,24 @@ local function useCallback<T>(
 	inputs: Array<unknown> | void | nil --[[ ROBLOX CHECK: verify if `null` wasn't used differently than `undefined` ]]
 ): T
 	local hook = nextHook()
-	table.insert(hookLog, {
-		primitive = "Callback",
-		stackError = Error.new(),
-		value = if hook ~= nil
-			then hook.memoizedState[
-				1 --[[ ROBLOX adaptation: added 1 to array index ]]
-			]
-			else callback,
-	}) --[[ ROBLOX CHECK: check if 'hookLog' is an Array ]]
+	if enableAllocationTrims then
+		-- ROBLOX deviation: with allocation trims the reconciler stores the callback directly
+		table.insert(hookLog, {
+			primitive = "Callback",
+			stackError = Error.new(),
+			value = if hook ~= nil then hook.memoizedState else callback,
+		})
+	else
+		table.insert(hookLog, {
+			primitive = "Callback",
+			stackError = Error.new(),
+			value = if hook ~= nil
+				then hook.memoizedState[
+					1 --[[ ROBLOX adaptation: added 1 to array index ]]
+				]
+				else callback,
+		}) --[[ ROBLOX CHECK: check if 'hookLog' is an Array ]]
+	end
 	return callback
 end
 -- ROBLOX deviation START: FIXME Luau: work around 'Failed to unify type packs' error: CLI-51338
@@ -404,20 +415,35 @@ end
 local function useMemo<T...>(nextCreate: () -> T..., inputs: Array<any> | nil): ...any
 	-- ROBLOX deviation END
 	local hook = nextHook()
-	-- ROBLOX deviation START: Wrap memoized values in a table and unpack to allow for multiple return values
-	-- local value = if hook ~= nil
-	-- 	then hook.memoizedState[
-	-- 		1 --[[ ROBLOX adaptation: added 1 to array index ]]
-	-- 	]
-	-- 	else nextCreate()
-	local value = if hook ~= nil then hook.memoizedState[1] else { nextCreate() }
-	-- ROBLOX deviation END
+	if enableAllocationTrims then
+		-- ROBLOX deviation: memoized values are packed to allow for multiple return values
+		local value = if hook ~= nil
+			then hook.memoizedState
+			else MemoValues.pack(nextCreate())
+		table.insert(
+			hookLog,
+			{ primitive = "Memo", stackError = Error.new(), value = value }
+		)
+		return MemoValues.unpack(value)
+	else
+		-- ROBLOX deviation START: Wrap memoized values in a table and unpack to allow for multiple return values
+		-- local value = if hook ~= nil
+		-- 	then hook.memoizedState[
+		-- 		1 --[[ ROBLOX adaptation: added 1 to array index ]]
+		-- 	]
+		-- 	else nextCreate()
+		local value = if hook ~= nil then hook.memoizedState[1] else { nextCreate() }
+		-- ROBLOX deviation END
 
-	table.insert(hookLog, { primitive = "Memo", stackError = Error.new(), value = value }) --[[ ROBLOX CHECK: check if 'hookLog' is an Array ]]
-	-- ROBLOX deviation START: unwrap memoized values in a table
-	-- return value
-	return table.unpack(value)
-	-- ROBLOX deviation END
+		table.insert(
+			hookLog,
+			{ primitive = "Memo", stackError = Error.new(), value = value }
+		) --[[ ROBLOX CHECK: check if 'hookLog' is an Array ]]
+		-- ROBLOX deviation START: unwrap memoized values in a table
+		-- return value
+		return table.unpack(value)
+		-- ROBLOX deviation END
+	end
 end
 local function useMutableSource<Source, Snapshot>(
 	source: MutableSource<Source>,

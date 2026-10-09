@@ -6,6 +6,8 @@ local jestExpect = JestGlobals.expect
 local jest = JestGlobals.jest
 
 local it = JestGlobals.it
+local describe = JestGlobals.describe
+local beforeEach = JestGlobals.beforeEach
 
 it("should fire subscribers and disconnect them", function()
 	local subscribe, fire = createSignal()
@@ -98,4 +100,66 @@ it("should stop firing a connection if disconnected mid-fire", function()
 	fire()
 
 	jestExpect(#spyA.mock.calls + #spyB.mock.calls).toBe(1)
+end)
+
+describe("with ReactReentrantSafeSignals", function()
+	local createSignal
+	beforeEach(function()
+		jest.resetModules()
+		require(Packages.Shared).ReactFeatureFlags.enableReentrantSafeSignals = true
+		createSignal = require(script.Parent.Parent["createSignal.roblox"])
+	end)
+
+	it("defers subscribers added during a fire to the next fire", function()
+		local subscribe, fire = createSignal()
+		local calls = {}
+		for i = 1, 20 do
+			subscribe(function(value)
+				table.insert(calls, "existing")
+				if value == 1 and i == 1 then
+					-- many new keys while the connections table is being traversed
+					for _ = 1, 50 do
+						subscribe(function()
+							table.insert(calls, "added")
+						end)
+					end
+				end
+			end)
+		end
+
+		fire(1)
+		local added = 0
+		for _, c in calls do
+			if c == "added" then
+				added += 1
+			end
+		end
+		jestExpect(#calls).toBe(20)
+		jestExpect(added).toBe(0)
+
+		table.clear(calls)
+		fire(2)
+		jestExpect(#calls).toBe(70)
+	end)
+
+	it("keeps an outer fire going through a nested fire", function()
+		local subscribe, fire = createSignal()
+		local late = jest.fn()
+		local nested = false
+		subscribe(function()
+			if not nested then
+				nested = true
+				subscribe(function()
+					late()
+				end)
+				fire()
+			end
+		end)
+
+		fire()
+		-- added during the outer fire: not called by the nested fire either
+		jestExpect(late).never.toBeCalled()
+		fire()
+		jestExpect(late).toBeCalledTimes(1)
+	end)
 end)

@@ -82,3 +82,21 @@ it("getClosestInstanceFromNode should return portaled instances", function()
 	)
 	jestExpect(portal3Label.memoizedProps.Text).toEqual("portal3[0]")
 end)
+
+it(
+	"getInstanceFromNode returns the host fiber for a rendered instance (ReactFixGetInstanceFromNode)",
+	function()
+		require(Packages.Shared).ReactFeatureFlags.fixGetInstanceFromNode = true
+		reactRobloxRoot:render(React.createElement("Frame", {}, {
+			Label = React.createElement("TextLabel", { Text = "Hello" }),
+		}))
+		Scheduler.unstable_flushAllWithoutAsserting()
+		local label = parent:FindFirstChildOfClass("Frame"):FindFirstChild("Label")
+		local fiber = ReactRobloxComponentTree.getInstanceFromNode(label)
+		jestExpect(fiber).never.toBe(nil)
+		jestExpect(fiber.stateNode).toBe(label)
+		jestExpect(ReactRobloxComponentTree.getInstanceFromNode(Instance.new("Frame"))).toBe(
+			nil
+		)
+	end
+)

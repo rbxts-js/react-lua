@@ -1,7 +1,7 @@
 [package]
 name = "roblox/react-shared"
 description = "Internal shared utilities used across React Luau packages."
-version = "17.3.12"
+version = "17.3.13"
 license = "MIT"
 authors = ["Roblox <no-reply@roblox.com>"]
 realm = "shared"

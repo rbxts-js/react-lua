@@ -672,6 +672,43 @@ end)
 -- 	end)
 -- end)
 
+describe("placing children with ReactSkipHostSiblingLookup", function()
+	beforeEach(function()
+		jest.resetModules()
+		require(Packages.Shared).ReactFeatureFlags.enableSkipHostSiblingLookup = true
+		React = require(Packages.React)
+		ReactRoblox = require(Packages.ReactRoblox)
+		parent = Instance.new("Folder")
+		reactRobloxRoot = ReactRoblox.createRoot(parent)
+		Scheduler = require(Packages.Scheduler)
+	end)
+
+	local function renderKeys(keys)
+		local children = {}
+		for i, key in keys do
+			children[i] = React.createElement("Frame", { key = key, LayoutOrder = i })
+		end
+		reactRobloxRoot:render(React.createElement("Folder", {}, children))
+		Scheduler.unstable_flushAllWithoutAsserting()
+		local frame = parent:FindFirstChildOfClass("Folder")
+		local names = {}
+		for _, child in frame:GetChildren() do
+			names[child.Name] = child.LayoutOrder
+		end
+		return names
+	end
+
+	it("parents inserted, moved and remaining children to the right parent", function()
+		expect(renderKeys({ "a", "c" })).toEqual({ a = 1, c = 2 })
+		-- inserts before a mounted sibling and at the end
+		expect(renderKeys({ "a", "b", "c", "d" })).toEqual({ a = 1, b = 2, c = 3, d = 4 })
+		-- every child moves
+		expect(renderKeys({ "d", "c", "b", "a" })).toEqual({ d = 1, c = 2, b = 3, a = 4 })
+		-- removal next to moves and an insert
+		expect(renderKeys({ "a", "e", "d" })).toEqual({ a = 1, e = 2, d = 3 })
+	end)
+end)
+
 describe("Portals", function()
 	it("should create and destroy instances as children of `target`", function()
 		local target = Instance.new("Folder")

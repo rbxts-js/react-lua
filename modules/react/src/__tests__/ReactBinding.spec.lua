@@ -6,6 +6,7 @@ local jestExpect = JestGlobals.expect
 local jest = JestGlobals.jest
 local describe = JestGlobals.describe
 local it = JestGlobals.it
+local beforeEach = JestGlobals.beforeEach
 
 local ReactTypes = require(Packages.Shared)
 type Binding<T> = ReactTypes.ReactBinding<T>
@@ -349,4 +350,58 @@ describe("createRef", function()
 			jestExpect(ref._source).toContain("Ref created")
 		end)
 	end
+end)
+
+describe("with ReactEnableAllocationTrims", function()
+	local Binding, ReactCreateRef
+	beforeEach(function()
+		jest.resetModules()
+		require(Packages.Shared).ReactFeatureFlags.enableAllocationTrims = true
+		Binding = require(script.Parent.Parent["ReactBinding.roblox"])
+		ReactCreateRef = require(script.Parent.Parent.ReactCreateRef)
+	end)
+
+	it("should notify subscribers added after earlier updates", function()
+		local binding, update = Binding.create(1)
+		update(2)
+		jestExpect(binding:getValue()).toBe(2)
+
+		local spyA, spyB = jest.fn(), jest.fn()
+		local disconnectA = Binding.subscribe(binding, function(...)
+			spyA(...)
+		end)
+		Binding.subscribe(binding, function(...)
+			spyB(...)
+		end)
+
+		update(3)
+		jestExpect(spyA).toHaveBeenCalledTimes(1)
+		jestExpect(spyA).toHaveBeenCalledWith(3)
+		jestExpect(spyB).toHaveBeenCalledWith(3)
+
+		disconnectA()
+		update(4)
+		jestExpect(spyA).toHaveBeenCalledTimes(1)
+		jestExpect(spyB).toHaveBeenCalledTimes(2)
+		jestExpect(binding:getValue()).toBe(4)
+	end)
+
+	it("should behave as a binding of its current value", function()
+		local ref = ReactCreateRef.createRef() :: any
+		ref.current = 1
+		jestExpect(ref["$$typeof"]).toBe((Binding.create(1) :: any)["$$typeof"])
+		jestExpect(ref:getValue()).toBe(1)
+		jestExpect(ref:map(tostring):getValue()).toBe("1")
+
+		local seen = {}
+		local disconnect = Binding.subscribe(ref, function(value)
+			table.insert(seen, { value, ref.current })
+		end)
+		ref.current = 2
+		disconnect()
+		ref.current = 3
+
+		jestExpect(seen).toEqual({ { 2, 2 } })
+		jestExpect(ref:getValue()).toBe(3)
+	end)
 end)

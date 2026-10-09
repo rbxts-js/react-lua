@@ -26,6 +26,8 @@ local it = JestGlobals.it
 local jest = JestGlobals.jest
 -- ROBLOX deviation START: add additional imports
 local String = LuauPolyfill.String
+local enableAllocationTrims =
+	require(Packages.Shared).ReactFeatureFlags.enableAllocationTrims
 -- ROBLOX deviation END
 
 local React
@@ -298,9 +300,8 @@ describe("ReactHooksInspectionIntegration", function()
 				id = 7,
 				-- ROBLOX deviation END
 				name = "Memo",
-				-- ROBLOX deviation START: useMemo wraps a value
-				-- value = "ab",
-				value = { "ab" },
+				-- ROBLOX deviation START: without allocation trims useMemo wraps a value
+				value = if enableAllocationTrims then "ab" else { "ab" },
 				-- ROBLOX deviation END
 				subHooks = {},
 			},
@@ -385,9 +386,8 @@ describe("ReactHooksInspectionIntegration", function()
 				id = 7,
 				-- ROBLOX deviation END
 				name = "Memo",
-				-- ROBLOX deviation START: useMemo wraps a value
-				-- value = "Ab",
-				value = { "Ab" },
+				-- ROBLOX deviation START: without allocation trims useMemo wraps a value
+				value = if enableAllocationTrims then "Ab" else { "Ab" },
 				-- ROBLOX deviation END
 				subHooks = {},
 			},
@@ -403,6 +403,43 @@ describe("ReactHooksInspectionIntegration", function()
 			},
 		})
 	end)
+	-- ROBLOX deviation START: bindings and multiple memoized values are Roblox-only;
+	-- the debug hooks read their trimmed shapes with ReactEnableAllocationTrims
+	describe("with ReactEnableAllocationTrims", function()
+		beforeEach(function()
+			jest.resetModules()
+			require(Packages.Shared).ReactFeatureFlags.enableAllocationTrims = true
+			ReactTestRenderer = require(Packages.Dev.ReactTestRenderer)
+			Scheduler = require(Packages.Dev.Scheduler)
+			React = require(Packages.Dev.React)
+			act = ReactTestRenderer.unstable_concurrentAct
+			ReactDebugTools = require(Packages.ReactDebugTools)
+		end)
+
+		it("should inspect useBinding and multi-value useMemo hooks", function()
+			local function Foo(props)
+				local binding = React.useBinding(props.value)
+				local a, b = React.useMemo(function()
+					return props.value, props.value + 1
+				end, { props.value })
+				return React.createElement("Frame", { value = binding, a = a, b = b })
+			end
+			local renderer =
+				ReactTestRenderer.create(React.createElement(Foo, { value = 1 }))
+			local childFiber = renderer.root:findByType(Foo):_currentFiber()
+			local tree = ReactDebugTools.inspectHooksOfFiber(childFiber)
+			expect(#tree).toBe(2)
+			expect(tree[1].name).toBe("Binding")
+			expect(tree[1].value).toBe(1)
+			expect(tree[2].name).toBe("Memo")
+			expect(tree[2].value[1]).toBe(1)
+			expect(tree[2].value[2]).toBe(2)
+			local props = renderer.root:findByType("Frame").props
+			expect(props.a).toBe(1)
+			expect(props.b).toBe(2)
+		end)
+	end)
+	-- ROBLOX deviation END
 	it("should inspect the value of the current provider in useContext", function()
 		local MyContext = React.createContext("default")
 		local function Foo(props)
